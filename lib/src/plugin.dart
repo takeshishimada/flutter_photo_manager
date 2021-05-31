@@ -396,6 +396,25 @@ class Plugin with BasePlugin, IosPlugin, AndroidPlugin {
       await _channel.invokeMethod('presentLimited');
     }
   }
+
+  Future<RecentPath> getRecent({
+    RequestType type = RequestType.all,
+  }) async {
+    final result = await _channel.invokeMethod('getRecent', {
+      'type': type.value,
+    });
+    return ConvertUtils.convertToPathEntity(result, type);
+  }
+
+  Future<List<AssetEntity>> getRecentAssetList(
+      RequestType type, int page, int count, bool updateTimeAsc) async {
+    final result = await _channel.invokeMethod('getRecentAssetListByPage', {
+      'page': page,
+      'count': count,
+      'asc': updateTimeAsc,
+    });
+    return ConvertUtils.convertToAssetList(result);
+  }
 }
 
 mixin BasePlugin {

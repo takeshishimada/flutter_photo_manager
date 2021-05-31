@@ -494,7 +494,7 @@ interface IDBUtils {
           context.contentResolver.query(allUri, columns, null, null, sortOrder)
         } else {
           context.contentResolver.query(allUri, columns, "${MediaStore.MediaColumns.BUCKET_ID} = ?", arrayOf(pathId), sortOrder)
-              ?: return 0
+                  ?: return 0
         }
     cursor?.use {
       if (cursor.moveToNext()) {
@@ -503,4 +503,19 @@ interface IDBUtils {
     }
     return 0
   }
+
+  fun getRecentCount(context: Context, type: Int): Int {
+    val columns = arrayOf(_ID)
+
+    val cond = RequestTypeUtils.getTypeCond(type)
+
+    context.contentResolver.query(allUri, columns, cond.typeWhere, cond.typeArgs.toTypedArray(), null)?.use { cursor ->
+      return cursor.count
+    }
+
+    return 0
+  }
+
+  fun getRecentAssetList(context: Context, type: Int, offset: Int, limit: Int, updateAsc: Boolean)
+
 }

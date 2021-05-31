@@ -160,6 +160,29 @@ class AssetPathEntity {
   }
 }
 
+class RecentPath {
+  final int count;
+  final RequestType requestType;
+
+  const RecentPath({
+    required this.count,
+    required this.requestType,
+  });
+
+  Future<List<AssetEntity>> getAssetByPage({
+    required int page,
+    int count = 30,
+    bool updateTimeAsc = false,
+  }) {
+    return _plugin.getRecentAssetList(
+      requestType,
+      page,
+      count,
+      updateTimeAsc,
+    );
+  }
+}
+
 /// Used to describe a picture or video
 class AssetEntity {
   /// see [id]

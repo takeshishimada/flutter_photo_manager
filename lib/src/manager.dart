@@ -323,4 +323,8 @@ class PhotoManager {
 
     return asset;
   }
+
+  static Future<RecentPath> getRecentPath() {
+    return _plugin.getRecent();
+  }
 }

@@ -30,10 +30,10 @@ import java.util.concurrent.TimeUnit
 
 
 class PhotoManagerPlugin(
-    private val applicationContext: Context,
-    private val messenger: BinaryMessenger,
-    private var activity: Activity?,
-    private val permissionsUtils: PermissionsUtils
+        private val applicationContext: Context,
+        private val messenger: BinaryMessenger,
+        private var activity: Activity?,
+        private val permissionsUtils: PermissionsUtils
 ) : MethodChannel.MethodCallHandler {
 
   val deleteManager = PhotoManagerDeleteManager(applicationContext, activity)
@@ -46,11 +46,11 @@ class PhotoManagerPlugin(
   companion object {
     private const val poolSize = 8
     private val threadPool: ThreadPoolExecutor = ThreadPoolExecutor(
-        poolSize + 3,
-        1000,
-        200,
-        TimeUnit.MINUTES,
-        ArrayBlockingQueue<Runnable>(poolSize + 3)
+            poolSize + 3,
+            1000,
+            200,
+            TimeUnit.MINUTES,
+            ArrayBlockingQueue<Runnable>(poolSize + 3)
     )
 
     fun runOnBackground(runnable: () -> Unit) {
@@ -201,8 +201,8 @@ class PhotoManagerPlugin(
 //    Debug.waitForDebugger()
     val applicationInfo = context.applicationInfo
     val packageInfo = context.packageManager.getPackageInfo(
-        applicationInfo.packageName,
-        PackageManager.GET_PERMISSIONS
+            applicationInfo.packageName,
+            PackageManager.GET_PERMISSIONS
     )
     return packageInfo.requestedPermissions.contains(Manifest.permission.ACCESS_MEDIA_LOCATION)
   }
@@ -227,6 +227,14 @@ class PhotoManagerPlugin(
 
           val list = photoManager.getGalleryList(type, hasAll, onlyAll, option)
           resultHandler.reply(ConvertUtils.convertToGalleryResult(list))
+        }
+      }
+      "getRecent" -> {
+        runOnBackground {
+          val type = call.argument<Int>("type")!!
+          val recentCount = photoManager.getRecentCount(type)
+          val result = mapOf<String, Any>("count" to recentCount)
+          resultHandler.reply(result)
         }
       }
       "getAssetWithGalleryId" -> {

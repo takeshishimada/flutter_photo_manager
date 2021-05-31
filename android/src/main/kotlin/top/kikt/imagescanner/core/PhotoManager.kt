@@ -299,4 +299,8 @@ class PhotoManager(private val context: Context) {
 
   }
 
+  fun getRecentCount(type: Int): Int {
+    return dbUtils.getRecentCount(context,type)
+  }
+
 }

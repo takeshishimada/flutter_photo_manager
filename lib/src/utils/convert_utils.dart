@@ -33,6 +33,14 @@ class ConvertUtils {
     return result;
   }
 
+  static RecentPath convertToPathEntity(Map map, RequestType requestType) {
+    final entity = RecentPath(
+      count: map['count'],
+      requestType: requestType,
+    );
+    return entity;
+  }
+
   static List<AssetEntity> convertToAssetList(Map data) {
     List<AssetEntity> result = [];
 

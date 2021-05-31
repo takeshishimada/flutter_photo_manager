@@ -69,6 +69,10 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
             child: Text("PresentLimited"),
             onPressed: _persentLimited,
           ),
+          ElevatedButton(
+            child: Text("getRecentPath"),
+            onPressed: getRecentPath,
+          ),
         ],
       ),
     );
@@ -164,5 +168,18 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
 
   Future<void> _persentLimited() async {
     await PhotoManager.presentLimited();
+  }
+
+  Future<void> getRecentPath() async {
+    final watch = Stopwatch();
+    watch.start();
+    final recent = await PhotoManager.getRecentPath();
+    print(
+        'path.count = ${recent.count}, timeout: ${watch.elapsedMilliseconds}');
+
+    watch.reset();
+    recent.getAssetByPage(
+      page: 0,
+    );
   }
 }
