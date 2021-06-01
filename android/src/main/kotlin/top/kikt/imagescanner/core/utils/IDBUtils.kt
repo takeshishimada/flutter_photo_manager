@@ -557,30 +557,32 @@ interface IDBUtils {
         cond.typeArgs.toTypedArray(),
         sortOrder.toString()
     )?.use { cursor ->
-      val id = cursor.getString(_ID)
-      val path = cursor.getString(DATA)
-      val duration = cursor.getLong(DURATION)
-      val added = cursor.getLong(DATE_ADDED)
-      val modified = cursor.getLong(DATE_MODIFIED)
-      val width = cursor.getIntOrNull(WIDTH) ?: 0
-      val height = cursor.getIntOrNull(HEIGHT) ?: 0
-      val mediaType = cursor.getInt(MEDIA_TYPE)
-      val name = cursor.getString(DISPLAY_NAME)
-      val orientation = cursor.getIntOrNull(ORIENTATION) ?: 0
+      while (cursor.moveToNext()) {
+        val id = cursor.getString(_ID)
+        val path = cursor.getString(DATA)
+        val duration = cursor.getLong(DURATION)
+        val added = cursor.getLong(DATE_ADDED)
+        val modified = cursor.getLong(DATE_MODIFIED)
+        val width = cursor.getIntOrNull(WIDTH) ?: 0
+        val height = cursor.getIntOrNull(HEIGHT) ?: 0
+        val mediaType = cursor.getInt(MEDIA_TYPE)
+        val name = cursor.getString(DISPLAY_NAME)
+        val orientation = cursor.getIntOrNull(ORIENTATION) ?: 0
 
-      val asset = AssetEntity(
-          id,
-          path,
-          duration,
-          added,
-          width,
-          height,
-          convertMediaTypeToInt(mediaType),
-          name,
-          modified,
-          orientation
-      )
-      result.add(asset)
+        val asset = AssetEntity(
+            id,
+            path,
+            duration,
+            added,
+            width,
+            height,
+            convertMediaTypeToInt(mediaType),
+            name,
+            modified,
+            orientation
+        )
+        result.add(asset)
+      }
     }
 
     return result
