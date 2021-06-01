@@ -25,4 +25,7 @@
 + (PMFilterOption *)convertMapToPMFilterOption:(NSDictionary *)map;
 
 + (PMFilterOptionGroup *)convertMapToOptionContainer:(NSDictionary *)map;
+
++ (NSDictionary *) convertPHAssetListToMap:(NSArray<PHAsset*> *) array;
+
 @end

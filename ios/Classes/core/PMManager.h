@@ -33,6 +33,10 @@ typedef void (^AssetResult)(PMAssetEntity *);
 
 - (NSArray<PMAssetPathEntity *> *)getGalleryList:(int)type hasAll:(BOOL)hasAll onlyAll:(BOOL)onlyAll option:(PMFilterOptionGroup *)option;
 
+- (int) getRecentCountWithType:(int) type;
+
+- (NSArray<PHAsset*>*) getAssetListWithType:(int)type page:(int)page count:(int)count asc:(BOOL)asc;
+
 - (NSArray<PMAssetEntity *> *)getAssetEntityListWithGalleryId:(NSString *)id type:(int)type page:(NSUInteger)page pageCount:(NSUInteger)pageCount filterOption:(PMFilterOptionGroup *)filterOption;
 
 - (PMAssetEntity *)getAssetEntity:(NSString *)assetId;

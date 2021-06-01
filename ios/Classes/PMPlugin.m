@@ -188,7 +188,24 @@
       NSDictionary *dictionary = [PMConvertUtils convertPathToMap:array];
       [handler reply:dictionary];
 
-
+    } else if ([call.method isEqualToString:@"getRecent"]) {
+      
+        int type = [call.arguments[@"type"] intValue];
+        int recentCount = [manager getRecentCountWithType: type];
+        [handler reply:@{
+            @"count": @(recentCount),
+        }];
+        
+    } else if([call.method isEqualToString:@"getRecentAssetListByPage"]){
+        
+        int type = [call.arguments[@"type"] intValue];
+        int page = [call.arguments[@"page"] intValue];
+        int count = [call.arguments[@"count"] intValue];
+        BOOL asc = [call.arguments[@"asc"] boolValue];
+        NSArray *assetList = [manager getAssetListWithType: type page:page count:count asc:asc];
+        NSDictionary *resultMap = [PMConvertUtils convertPHAssetListToMap:assetList];
+        [handler reply: resultMap];
+        
     } else if ([call.method isEqualToString:@"getAssetWithGalleryId"]) {
       NSString *id = call.arguments[@"id"];
       int type = [call.arguments[@"type"] intValue];

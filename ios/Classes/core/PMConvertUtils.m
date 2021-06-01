@@ -60,6 +60,18 @@
   return @{@"data": data};
 }
 
++ (NSDictionary *)convertPHAssetListToMap:(NSArray<PHAsset *> *)array {
+  NSMutableArray *data = [NSMutableArray array];
+  
+  for (PHAsset *asset in array) {
+    [data addObject: [self convertPHAssetToMap:asset needTitle:NO]];
+  }
+
+  return @{
+      @"data": data
+  };
+}
+
 + (NSDictionary *)convertPHAssetToMap:(PHAsset *)asset
                             needTitle:(BOOL)needTitle {
   long createDt = (int) asset.creationDate.timeIntervalSince1970;

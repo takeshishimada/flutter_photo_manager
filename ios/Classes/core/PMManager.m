@@ -106,6 +106,36 @@
   return array;
 }
 
+
+
+- (int)getRecentCountWithType:(int)type {
+    PHFetchOptions *assetOptions = [self getFetchOptionWithType:type];
+    PHFetchResult<PHAsset *> *assetList = [PHAsset fetchAssetsWithOptions:assetOptions];
+    return (int)assetList.count;
+}
+
+- (NSArray<PHAsset*> *) getAssetListWithType:(int)type page:(int)page count:(int)count asc:(BOOL)asc{
+    int startIndex = page * count;
+    return [self getAssetListWithType:type startIndex:startIndex count:count asc:asc];
+}
+
+
+- (NSArray<PHAsset*> *) getAssetListWithType:(int)type startIndex:(int)startIndex count:(int)count asc:(BOOL)asc{
+    PHFetchOptions *options = [self getFetchOptionWithType:type];
+    options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:asc]];
+    
+    NSMutableArray *array = [NSMutableArray new];
+    
+    PHFetchResult<PHAsset *> *fetchResult = [PHAsset fetchAssetsWithOptions:options];
+    int totalCount = (int) fetchResult.count;
+    for (int i = startIndex; i < count + startIndex && i < totalCount; i++){
+        PHAsset *asset = fetchResult[i];
+        [array addObject:asset];
+    }
+    
+    return array;
+}
+
 - (void)logCollections:(PHFetchResult *)collections option:(PHFetchOptions *)option {
   if(!PMLogUtils.sharedInstance.isLog){
       return;
@@ -713,6 +743,53 @@
   return [PMAssetPathEntity entityWithId:id
                                     name:collection.localizedTitle
                               assetCount:(int) fetchResult.count];
+}
+
+- (PHFetchOptions *) getFetchOptionWithType:(int) type{
+    PHFetchOptions *options = [PHFetchOptions new];
+    BOOL containsImage = [PMRequestTypeUtils containsImage:type];
+    BOOL containsVideo = [PMRequestTypeUtils containsVideo:type];
+    BOOL containsAudio = [PMRequestTypeUtils containsAudio:type];
+    
+    NSMutableString *cond = [NSMutableString new];
+    NSMutableArray *args = [NSMutableArray new];
+    
+    if (containsImage) {
+      [cond appendString:@"("];
+
+      [cond appendString:@"mediaType == %d"];
+      [args addObject:@(PHAssetMediaTypeImage)];
+
+      [cond appendString:@")"];
+    }
+
+    if (containsVideo) {
+      if (![cond isEmpty]) {
+        [cond appendString:@" OR "];
+      }
+
+      [cond appendString:@" ( "];
+      [cond appendString:@"mediaType == %d"];
+      [args addObject:@(PHAssetMediaTypeVideo)];
+        
+      [cond appendString:@" ) "];
+    }
+
+    if (containsAudio) {
+      if (![cond isEmpty]) {
+        [cond appendString:@" OR "];
+      }
+
+      [cond appendString:@" ( "];
+      [cond appendString:@"mediaType == %d"];
+      [args addObject:@(PHAssetMediaTypeAudio)];
+
+      [cond appendString:@" ) "];
+    }
+
+    options.predicate = [NSPredicate predicateWithFormat:cond argumentArray:args];
+    
+    return options;
 }
 
 - (PHFetchOptions *)getAssetOptions:(int)type filterOption:(PMFilterOptionGroup *)optionGroup {
