@@ -272,7 +272,7 @@ class PhotoManagerPlugin(
       "getRecentAssetListByIndex" -> {
         runOnBackground {
           val type = call.getInt("type")
-          val index = call.getInt("index")
+          val index = call.getInt("startIndex")
           val count = call.getInt("count")
           val asc = call.argument<Boolean>("asc")!!
           val list = photoManager.getRecentAssetByIndex(type, index, count, asc)

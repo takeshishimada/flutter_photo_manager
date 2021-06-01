@@ -181,6 +181,19 @@ class RecentPath {
       updateTimeAsc,
     );
   }
+
+  Future<List<AssetEntity>> getAssetByIndex({
+    required int startIndex,
+    int count = 30,
+    bool updateTimeAsc = false,
+  }) {
+    return _plugin.getRecentAssetListByIndex(
+      requestType,
+      startIndex,
+      count,
+      updateTimeAsc,
+    );
+  }
 }
 
 /// Used to describe a picture or video

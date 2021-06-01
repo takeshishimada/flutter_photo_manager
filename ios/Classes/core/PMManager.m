@@ -120,7 +120,7 @@
 }
 
 
-- (NSArray<PHAsset*> *) getAssetListWithType:(int)type startIndex:(int)startIndex count:(int)count asc:(BOOL)asc{
+- (NSArray<PHAsset*> *) getAssetListWithType:(int)type startIndex:(int)startIndex count:(int)count asc:(BOOL)asc {
     PHFetchOptions *options = [self getFetchOptionWithType:type];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"modificationDate" ascending:asc]];
     

@@ -206,6 +206,16 @@
         NSDictionary *resultMap = [PMConvertUtils convertPHAssetListToMap:assetList];
         [handler reply: resultMap];
         
+    } else if([call.method isEqualToString:@"getRecentAssetListByIndex"]){
+        
+        int type = [call.arguments[@"type"] intValue];
+        int startIndex = [call.arguments[@"startIndex"] intValue];
+        int count = [call.arguments[@"count"] intValue];
+        BOOL asc = [call.arguments[@"asc"] boolValue];
+        NSArray *assetList = [manager getAssetListWithType: type startIndex:startIndex count:count asc:asc];
+        NSDictionary *resultMap = [PMConvertUtils convertPHAssetListToMap:assetList];
+        [handler reply: resultMap];
+        
     } else if ([call.method isEqualToString:@"getAssetWithGalleryId"]) {
       NSString *id = call.arguments[@"id"];
       int type = [call.arguments[@"type"] intValue];

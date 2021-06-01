@@ -182,6 +182,7 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
         'path.count = ${recent.count}, timeout: ${watch.elapsedMilliseconds}');
 
     final totalWatch = Stopwatch();
+    print('Test by page');
     totalWatch.start();
 
     for (var pageIndex = 0, pageCount = 300;
@@ -194,10 +195,28 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
       );
 
       print(
-          'page index: $pageIndex asset count: ${asset.length}, timeout: ${watch.elapsedMilliseconds}');
+          'get page asset by page index: $pageIndex asset count: ${asset.length}, timeout: ${watch.elapsedMilliseconds}');
     }
 
-    print('total time ${totalWatch.elapsedMilliseconds}');
+    print(
+        'The total of page index running delay: ${totalWatch.elapsedMilliseconds}');
+
+    print('Test by index');
+    totalWatch.reset();
+    for (var startIndex = 0, count = 300;
+        startIndex < recent.count;
+        startIndex += count) {
+      watch.reset();
+      final asset = await recent.getAssetByIndex(
+        startIndex: startIndex,
+        count: count,
+      );
+
+      print(
+          'start index: $startIndex asset count: ${asset.length}, timeout: ${watch.elapsedMilliseconds}');
+    }
+    print(
+        'The total of start index running delay: ${totalWatch.elapsedMilliseconds}');
   }
 
   void _firstLoadExample() async {
@@ -210,6 +229,7 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
     sw.reset();
     final firstScreen = await recent.getAssetListPaged(0, 300);
     final assetLength = firstScreen.length;
-    print('first screen load time: ${sw.elapsedMilliseconds}ms, count: $assetLength');
+    print(
+        'first screen load time: ${sw.elapsedMilliseconds}ms, count: $assetLength');
   }
 }

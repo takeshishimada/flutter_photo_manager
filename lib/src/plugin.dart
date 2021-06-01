@@ -416,6 +416,17 @@ class Plugin with BasePlugin, IosPlugin, AndroidPlugin {
     });
     return ConvertUtils.convertToAssetList(result);
   }
+
+  Future<List<AssetEntity>> getRecentAssetListByIndex(
+      RequestType type, int startIndex, int count, bool updateTimeAsc) async {
+    final result = await _channel.invokeMethod('getRecentAssetListByIndex', {
+      'type': type.value,
+      'startIndex': startIndex,
+      'count': count,
+      'asc': updateTimeAsc,
+    });
+    return ConvertUtils.convertToAssetList(result);
+  }
 }
 
 mixin BasePlugin {
