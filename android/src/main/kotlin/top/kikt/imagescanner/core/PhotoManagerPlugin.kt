@@ -30,10 +30,10 @@ import java.util.concurrent.TimeUnit
 
 
 class PhotoManagerPlugin(
-        private val applicationContext: Context,
-        private val messenger: BinaryMessenger,
-        private var activity: Activity?,
-        private val permissionsUtils: PermissionsUtils
+    private val applicationContext: Context,
+    private val messenger: BinaryMessenger,
+    private var activity: Activity?,
+    private val permissionsUtils: PermissionsUtils
 ) : MethodChannel.MethodCallHandler {
 
   val deleteManager = PhotoManagerDeleteManager(applicationContext, activity)
@@ -46,11 +46,11 @@ class PhotoManagerPlugin(
   companion object {
     private const val poolSize = 8
     private val threadPool: ThreadPoolExecutor = ThreadPoolExecutor(
-            poolSize + 3,
-            1000,
-            200,
-            TimeUnit.MINUTES,
-            ArrayBlockingQueue<Runnable>(poolSize + 3)
+        poolSize + 3,
+        1000,
+        200,
+        TimeUnit.MINUTES,
+        ArrayBlockingQueue<Runnable>(poolSize + 3)
     )
 
     fun runOnBackground(runnable: () -> Unit) {
@@ -201,8 +201,8 @@ class PhotoManagerPlugin(
 //    Debug.waitForDebugger()
     val applicationInfo = context.applicationInfo
     val packageInfo = context.packageManager.getPackageInfo(
-            applicationInfo.packageName,
-            PackageManager.GET_PERMISSIONS
+        applicationInfo.packageName,
+        PackageManager.GET_PERMISSIONS
     )
     return packageInfo.requestedPermissions.contains(Manifest.permission.ACCESS_MEDIA_LOCATION)
   }
@@ -257,6 +257,26 @@ class PhotoManagerPlugin(
           val option = call.getOption()
           val list: List<AssetEntity> = photoManager.getAssetListWithRange(galleryId, type, start, end, option)
           resultHandler.reply(ConvertUtils.convertToAssetResult(list))
+        }
+      }
+      "getRecentAssetListByPage" -> {
+        runOnBackground {
+          val type = call.getInt("type")
+          val page = call.getInt("page")
+          val count = call.getInt("count")
+          val asc = call.argument<Boolean>("asc")!!
+          val list = photoManager.getRecentAssetByPage(type, page, count, asc)
+          resultHandler.reply(list)
+        }
+      }
+      "getRecentAssetListByIndex" -> {
+        runOnBackground {
+          val type = call.getInt("type")
+          val index = call.getInt("index")
+          val count = call.getInt("count")
+          val asc = call.argument<Boolean>("asc")!!
+          val list = photoManager.getRecentAssetByIndex(type, index, count, asc)
+          resultHandler.reply(list)
         }
       }
       "getThumb" -> {

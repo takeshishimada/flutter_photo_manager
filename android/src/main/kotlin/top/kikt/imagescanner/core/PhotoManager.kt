@@ -300,7 +300,17 @@ class PhotoManager(private val context: Context) {
   }
 
   fun getRecentCount(type: Int): Int {
-    return dbUtils.getRecentCount(context,type)
+    return dbUtils.getRecentCount(context, type)
+  }
+
+  fun getRecentAssetByPage(type: Int, page: Int, count: Int, asc: Boolean): Map<String, Any?> {
+    val entityList = dbUtils.getRecentAssetListByPage(context, type, page, count, asc);
+    return ConvertUtils.convertToAssetResult(entityList)
+  }
+
+  fun getRecentAssetByIndex(type: Int, index: Int, count: Int, asc: Boolean): Map<String, Any?> {
+    val entityList = dbUtils.getRecentAssetList(context, type, index, count, asc)
+    return ConvertUtils.convertToAssetResult(entityList)
   }
 
 }

@@ -245,7 +245,7 @@ object DBUtils : IDBUtils {
 
     val mimeType = cursor.getString(MediaStore.Files.FileColumns.MIME_TYPE)
 
-    return AssetEntity(id, path, duration, date, width, height, getMediaType(type), displayName, modifiedDate, orientation, lat, lng, mimeType = mimeType)
+    return AssetEntity(id, path, duration, date, width, height, convertMediaTypeToInt(type), displayName, modifiedDate, orientation, lat, lng, mimeType = mimeType)
   }
 
   @SuppressLint("Recycle")

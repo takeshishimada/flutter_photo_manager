@@ -93,7 +93,7 @@ interface IDBUtils {
 
   fun getAssetEntity(context: Context, id: String): AssetEntity?
 
-  fun getMediaType(type: Int): Int {
+  fun convertMediaTypeToInt(type: Int): Int {
     return when (type) {
       MEDIA_TYPE_IMAGE -> 1
       MEDIA_TYPE_VIDEO -> 2
@@ -117,6 +117,10 @@ interface IDBUtils {
   }
 
   fun Cursor.getInt(columnName: String): Int {
+    return getInt(getColumnIndex(columnName))
+  }
+
+  fun Cursor.getIntOrNull(columnName: String): Int? {
     return getInt(getColumnIndex(columnName))
   }
 
@@ -494,7 +498,7 @@ interface IDBUtils {
           context.contentResolver.query(allUri, columns, null, null, sortOrder)
         } else {
           context.contentResolver.query(allUri, columns, "${MediaStore.MediaColumns.BUCKET_ID} = ?", arrayOf(pathId), sortOrder)
-                  ?: return 0
+              ?: return 0
         }
     cursor?.use {
       if (cursor.moveToNext()) {
@@ -516,6 +520,70 @@ interface IDBUtils {
     return 0
   }
 
-  fun getRecentAssetList(context: Context, type: Int, offset: Int, limit: Int, updateAsc: Boolean)
+  fun getRecentAssetListByPage(context: Context, type: Int, page: Int, pageCount: Int, updateAsc: Boolean): ArrayList<AssetEntity> {
+    val startIndex = page * pageCount
+    return getRecentAssetList(context, type, startIndex, pageCount, updateAsc)
+  }
+
+  fun getRecentAssetList(context: Context, type: Int, startIndex: Int, count: Int, updateAsc: Boolean): ArrayList<AssetEntity> {
+    val columns = arrayOf(
+        _ID,
+        DATA,
+        DURATION,
+        DATE_ADDED,
+        DATE_MODIFIED,
+        WIDTH,
+        HEIGHT,
+        MEDIA_TYPE,
+        DISPLAY_NAME,
+        ORIENTATION
+    );
+
+    val cond = RequestTypeUtils.getTypeCond(type)
+
+    val sortOrder = StringBuilder(DATE_MODIFIED)
+    if (!updateAsc) {
+      sortOrder.append(" DESC")
+    }
+
+    sortOrder.append(" LIMIT $count OFFSET $startIndex")
+
+    val result = ArrayList<AssetEntity>()
+
+    context.contentResolver.query(
+        allUri,
+        columns,
+        cond.typeWhere,
+        cond.typeArgs.toTypedArray(),
+        sortOrder.toString()
+    )?.use { cursor ->
+      val id = cursor.getString(_ID)
+      val path = cursor.getString(DATA)
+      val duration = cursor.getLong(DURATION)
+      val added = cursor.getLong(DATE_ADDED)
+      val modified = cursor.getLong(DATE_MODIFIED)
+      val width = cursor.getIntOrNull(WIDTH) ?: 0
+      val height = cursor.getIntOrNull(HEIGHT) ?: 0
+      val mediaType = cursor.getInt(MEDIA_TYPE)
+      val name = cursor.getString(DISPLAY_NAME)
+      val orientation = cursor.getIntOrNull(ORIENTATION) ?: 0
+
+      val asset = AssetEntity(
+          id,
+          path,
+          duration,
+          added,
+          width,
+          height,
+          convertMediaTypeToInt(mediaType),
+          name,
+          modified,
+          orientation
+      )
+      result.add(asset)
+    }
+
+    return result
+  }
 
 }

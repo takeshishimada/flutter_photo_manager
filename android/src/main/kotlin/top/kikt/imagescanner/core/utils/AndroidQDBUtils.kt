@@ -223,7 +223,7 @@ object AndroidQDBUtils : IDBUtils {
     val modifiedDate = cursor.getLong(MediaStore.MediaColumns.DATE_MODIFIED)
     val orientation: Int = cursor.getInt(MediaStore.MediaColumns.ORIENTATION)
     val relativePath: String = cursor.getString(MediaStore.MediaColumns.RELATIVE_PATH)
-    return AssetEntity(id, path, duration, date, width, height, getMediaType(type), displayName, modifiedDate, orientation, androidQRelativePath = relativePath, mimeType = mimeType)
+    return AssetEntity(id, path, duration, date, width, height, convertMediaTypeToInt(type), displayName, modifiedDate, orientation, androidQRelativePath = relativePath, mimeType = mimeType)
   }
 
   override fun getAssetEntity(context: Context, id: String): AssetEntity? {

@@ -409,6 +409,7 @@ class Plugin with BasePlugin, IosPlugin, AndroidPlugin {
   Future<List<AssetEntity>> getRecentAssetList(
       RequestType type, int page, int count, bool updateTimeAsc) async {
     final result = await _channel.invokeMethod('getRecentAssetListByPage', {
+      'type': type.value,
       'page': page,
       'count': count,
       'asc': updateTimeAsc,
