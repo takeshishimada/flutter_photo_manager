@@ -71,7 +71,11 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
           ),
           ElevatedButton(
             child: Text("getRecentPath"),
-            onPressed: getRecentPath,
+            onPressed: getRecentPathExample,
+          ),
+          ElevatedButton(
+            child: Text("firstLoad"),
+            onPressed: _firstLoadExample,
           ),
         ],
       ),
@@ -170,16 +174,42 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
     await PhotoManager.presentLimited();
   }
 
-  Future<void> getRecentPath() async {
+  Future<void> getRecentPathExample() async {
     final watch = Stopwatch();
     watch.start();
     final recent = await PhotoManager.getRecentPath();
     print(
         'path.count = ${recent.count}, timeout: ${watch.elapsedMilliseconds}');
 
-    watch.reset();
-    recent.getAssetByPage(
-      page: 0,
-    );
+    final totalWatch = Stopwatch();
+    totalWatch.start();
+
+    for (var pageIndex = 0, pageCount = 300;
+        pageIndex < recent.count / pageCount;
+        pageIndex++) {
+      watch.reset();
+      final asset = await recent.getAssetByPage(
+        page: pageIndex,
+        count: pageCount,
+      );
+
+      print(
+          'page index: $pageIndex asset count: ${asset.length}, timeout: ${watch.elapsedMilliseconds}');
+    }
+
+    print('total time ${totalWatch.elapsedMilliseconds}');
+  }
+
+  void _firstLoadExample() async {
+    final sw = Stopwatch();
+    sw.start();
+    final pathList = await PhotoManager.getAssetPathList();
+    print("load path list time: ${sw.elapsedMilliseconds}ms");
+
+    final recent = pathList.firstWhere((element) => element.isAll);
+    sw.reset();
+    final firstScreen = await recent.getAssetListPaged(0, 300);
+    final assetLength = firstScreen.length;
+    print('first screen load time: ${sw.elapsedMilliseconds}ms, count: $assetLength');
   }
 }
